@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload File</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0 auto;
+            font-family: "Inter", sans-serif;
+        }
+        .container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 30px;
+        }
+        .one {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 50%;
+        }
+        input {
+            padding: 10px;
+            font-size: 20px;
+            font-family: "Inter", sans-serif;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Загрузите файл</h1>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div>
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        <form method="post" enctype="multipart/form-data" class="one">
+            <input type="file" name="file" class="two">
+            <input type="submit" value="Запустить">
+        </form>
+    </div>
+</body>
+</html>
