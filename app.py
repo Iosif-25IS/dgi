@@ -22,15 +22,15 @@ if not os.path.exists('uploads'):
 def upload_file():
     if request.method == 'POST':
         if 'file' not in request.files:
-            flash('No file part')
+            flash('No file part', 'error')
             return redirect(request.url)
         file = request.files['file']
         if file.filename == '':
-            flash('Файл не выбран')
+            flash('Файл не выбран', 'error')
             return redirect(request.url)
         if file:
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-            file.save(file_path)
+            
             
             
         
@@ -189,7 +189,7 @@ def upload_file():
                         already_matched_new_aparts.add(new_apart_id)
 
                         # Выводим результат подбора
-                        print(f"Family ID {family_id} подобрана квартира с new_apart_id {new_apart_id}")
+                        
                         cursor.execute(f"INSERT INTO recomendation.offer (family_id, new_apart_id) VALUES ({family_id}, {new_apart_id})")
                         conn.commit()
 
@@ -199,7 +199,7 @@ def upload_file():
                         exists = cursor.fetchone()
                         if not exists:
                             # Выводим сообщение о том, что для семьи не найдено подходящих квартир
-                            print(f"Для Family ID {family_id} не найдено подходящих квартир")
+                            
                             cursor.execute(f"INSERT INTO recomendation.cannot_offer (family_id) VALUES ({family_id})")
                             conn.commit()
 
@@ -227,7 +227,7 @@ def upload_file():
                 with pd.ExcelWriter(excel_file, engine='openpyxl') as writer:
                     for view in views:
                         query = f"SELECT * FROM recomendation.{view}"
-                        print(f"Executing query: {query}")
+                        
 
                         try:
                             cursor = conn.cursor()
@@ -238,7 +238,7 @@ def upload_file():
 
                             if not df.empty:
                                 df.to_excel(writer, sheet_name=view, index=False)
-                                print(f"Saved {view} to Excel")
+                                
                             else:
                                 print(f"No data found for view: {view}")
 
@@ -273,15 +273,16 @@ def upload_file():
             conn.close()
 
         start_time = datetime.now()
-        first = insert_to_family(file_path)
-        print(f'result = {first} time of execute = {datetime.now() - start_time}')
-        second = insert_to_new_apart(file_path)
-        print(f'result = {second} time of execute = {datetime.now() - start_time}')
-        third = match_new_apart_to_family()
-        print(f'result = {third} time of execute = {datetime.now() - start_time}')
-        four = save_views_to_excel()
+        insert_to_family(file_path)
+        
+        insert_to_new_apart(file_path)
+        
+        match_new_apart_to_family()
+        
+        save_views_to_excel()
         print(f'Total time of execute = {datetime.now() - start_time}')
-        flash('Файл сохранен на рабочий стол')
+        #delete()
+        flash('Файл сохранен на рабочий стол', 'success')
         return redirect(url_for('upload_file'))
     
     return render_template('index.html')
